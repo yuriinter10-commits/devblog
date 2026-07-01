@@ -1,13 +1,93 @@
 {% extends "blog/base.html" %}
+{% load static %}
 
 {% block content %}
-    
-<h2>Sobre o DevBlog</h2>
-    <p>O DevBlog é um portal de notícias e artigos sobre tecnologia, programação e desenvolvimento de software.</p> 
-    <p>Nosso objetivo é fornecer conteúdo relevante e atualizado para desenvolvedores, entusiastas de tecnologia e profissionais da área.</p>
+
+<style>
+  .sobre-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  .avatar-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 1.5rem;
+    display: block;
+  }
+
+  .nome { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+  .cargo { font-size: 14px; font-weight: 500; color: #534AB7; margin-bottom: 1.25rem; }
+  .divisor { border: none; border-top: 1px solid #eeecea; margin: 1.25rem 0; }
+  .bio { font-size: 15px; color: #5a5955; line-height: 1.7; margin-bottom: 1.5rem; }
+
+  .skills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 1.75rem; }
+  .skill { background: #f0eefd; color: #3C3489; font-size: 13px; font-weight: 500; padding: 5px 14px; border-radius: 20px; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.75rem; }
+  .stat { background: #f5f4f0; border-radius: 12px; padding: 14px 8px; }
+  .stat-num { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .stat-label { font-size: 12px; color: #8a8880; }
+
+  .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 500; padding: 10px 22px; border-radius: 10px; text-decoration: none; }
+  .btn-primary { background: #1a1a18; color: #fff; }
+  .btn-secondary { background: #f0eefd; color: #3C3489; }
+</style>
+
+<div class="sobre-wrapper">
+  <div class="card">
+
+    <img src="{% static 'blog/images/logo.png' %}" alt="DevBlog" class="avatar-img" />
+
+    <h1 class="nome">DevBlog</h1>
+    <p class="cargo">Portal de tecnologia e programação</p>
+    <hr class="divisor" />
+    <p class="bio">
+      O DevBlog é um portal de notícias e artigos sobre tecnologia,
+      programação e desenvolvimento de software — conteúdo relevante
+      para devs e entusiastas da área.
+    </p>
+    <div class="skills">
+      <span class="skill">Tecnologia</span>
+      <span class="skill">Programação</span>
+      <span class="skill">Dev Web</span>
+      <span class="skill">Open Source</span>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">100+</div>
+        <div class="stat-label">artigos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5k</div>
+        <div class="stat-label">leitores</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2024</div>
+        <div class="stat-label">desde</div>
+      </div>
+    </div>
+    <div class="botoes">
+      <a href="/" class="btn btn-primary">Ver artigos</a>
+      <a href="/contato" class="btn btn-secondary">Contato</a>
+    </div>
+
+  </div>
+</div>
 
 {% endblock %}
-
-    
-
-
