@@ -1,8 +1,6 @@
 from django.db import models
 
 # blog/models.py
-from django.db import models
-
 class Categoria(models.Model):
     # Coluna de texto curto (máximo 100 caracteres)
     nome = models.CharField(max_length=100)
