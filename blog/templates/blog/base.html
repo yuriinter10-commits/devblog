@@ -22,7 +22,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'sobre_nos' %}">Sobre</a>
                         </li>
-                        <!-- terminar Aqui -->   
+                       {% for categoria in categorias %}
+                    <li>
+                        <a href="#">{{ categoria.nome }}</a>
+                    </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </nav>
