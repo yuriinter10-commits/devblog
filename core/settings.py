@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'blog'
+    'blog',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -76,8 +77,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'devblog_db',
+        'USER': 'root',                # seu usuário do MySQL
+        'PASSWORD': 'senacrs',         # sua senha do MySQL      
+        'HOST': 'localhost',           # ou o IP do servidor
+        'PORT': '3307',                # porta padrão do MySQL
     }
 }
 

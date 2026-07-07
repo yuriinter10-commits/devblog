@@ -22,5 +22,19 @@ class Artigo(models.Model):
     
     autor = models.CharField(max_length=100, default="Admin")
 
+   # 3. Tabela de Mensagens de Contato
+
+
     def __str__(self):
         return self.titulo
+   
+class MensagemContato(models.Model):
+    nome = models.CharField(max_length=100)
+    # O EmailField valida automaticamente se tem @ e formato correto!
+    email = models.EmailField()
+    mensagem = models.TextField()
+    data_envio = models.DateTimeField(auto_now_add=True)
+   
+    
+    def __str__(self):
+        return f"Mensagem de {self.nome}"

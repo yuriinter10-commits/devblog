@@ -21,12 +21,20 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'sobre_nos' %}">Sobre</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Categorias
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    {% for categoria in categorias %}
+                                    <li>
+                                        <a class="dropdown-item" href="#">{{ categoria.nome }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <a class="nav-link" href="{% url 'fale_conosco' %}">Contato</a>
                         </li>
-                       {% for categoria in categorias %}
-                    <li>
-                        <a href="#">{{ categoria.nome }}</a>
-                    </li>
-                        {% endfor %}
                     </ul>
                 </div>
             </nav>
