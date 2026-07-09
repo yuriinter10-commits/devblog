@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Carrega as variáveis de ambiente do arquivo .env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +25,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vitmuoerrdf!mpf=r3lx26--9mhuh#76x(h0qqm9hgz^v_jev1'
+SECRET_KEY = os.getenv('SECRET_KEY', 'sua_chave_secreta_aqui')  # Substitua 'sua_chave_secreta_aqui' por uma chave segura
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',') # Lista de hosts permitidos, separados por vírgula
 
+print('ALLOWED_HOSTS:', ALLOWED_HOSTS)  # Adicione esta linha para depuração
 
 # Application definition
 
@@ -50,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Adicione esta linha para servir arquivos estáticos        
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -77,12 +84,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'devblog_db',
-        'USER': 'root',                # seu usuário do MySQL
-        'PASSWORD': 'senacrs',         # sua senha do MySQL      
-        'HOST': 'localhost',           # ou o IP do servidor
-        'PORT': '3307',                # porta padrão do MySQL
+        'ENGINE': os.getenv ('DATABASE_ENGINE'),
+        'NAME': os.getenv ('DATABASE_NAME'),  
+        'USER': os.getenv ('DATABASE_USER'),  
+        'PASSWORD': os.getenv ('DATABASE_PASSWORD'),  
+        'HOST': os.getenv ('DATABASE_HOST'),  
+        'PORT': os.getenv ('DATABASE_PORT'),  
+                                
     }
 }
 
@@ -121,3 +129,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+}
