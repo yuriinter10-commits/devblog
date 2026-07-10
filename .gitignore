@@ -32,7 +32,8 @@ MANIFEST
 *.spec
 #venv/
 venv
-
+#staticfiles
+staticfiles
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
