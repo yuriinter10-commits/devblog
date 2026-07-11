@@ -5,53 +5,351 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevBlog</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;600;700;900&family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'blog/css/style.css' %}">
-     
-<body class="bg-light d-flex flex-column min-vh-100">
-    
-    <!-- Area do Menu -->
-       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'home' %}">🚀 DevBlog</a> 
-                <div class="collapse navbar-collapse">            
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'sobre_nos' %}">Sobre</a>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Categorias
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    {% for categoria in lista_categorias %}
-                                    <li>
-                                        <a class="dropdown-item" href="#">{{ categoria.nome }}</a>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                            <a class="nav-link" href="{% url 'fale_conosco' %}">Contato</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-    
-        
-        <!-- Area Principal -->
-    <main class="container my-5"> 
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:       #111111;
+            --bg2:      #1a1a1a;
+            --bg3:      #222222;
+            --gold:     #C9A84C;
+            --gold-dim: #8a6f2e;
+            --text:     #f0f0f0;
+            --muted:    #888888;
+            --border:   #2e2e2e;
+        }
+
+        body {
+            color: var(--text);
+            font-family: 'Barlow', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── FUNDO ANIMADO ── */
+        .bg-animado {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animado img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background: rgba(17, 17, 17, 0.92) !important;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            backdrop-filter: blur(8px);
+        }
+
+        .navbar-brand {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--text) !important;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+
+        .navbar-brand span { color: var(--gold); }
+
+        /* Botão hamburguer mobile */
+        .navbar-toggler {
+            border: none !important;
+            padding: 4px 8px;
+            color: var(--muted);
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .navbar-toggler:focus { box-shadow: none !important; }
+
+        /* ── DESKTOP: links do menu ── */
+        .nav-link {
+            font-size: 13px;
+            letter-spacing: 0.15em;
+            padding: 0.4rem 1rem !important;
+            font-family: 'Barlow Condensed', sans-serif;
+            text-transform: uppercase;
+            color: var(--muted) !important;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover { color: var(--text) !important; }
+
+        /* Botão reticências — remove seta do Bootstrap */
+        .nav-link.dropdown-toggle::after { display: none; }
+
+        .nav-item.dropdown > .nav-link {
+            font-size: 20px;
+            letter-spacing: 4px;
+            line-height: 1;
+            padding: 0.2rem 0.8rem !important;
+        }
+
+        .nav-item.dropdown > .nav-link:hover { color: var(--gold) !important; }
+
+        /* ── DROPDOWN DESKTOP ── */
+        .dropdown-menu {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 0;
+            padding: 0.4rem 0;
+            min-width: 180px;
+        }
+
+        .dropdown-item {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 0.55rem 1.25rem;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg3);
+            color: var(--gold);
+        }
+
+        .dropdown-item.disabled {
+            font-size: 10px !important;
+            color: var(--gold) !important;
+            opacity: 1;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        /* ── OFFCANVAS MOBILE ── */
+        .offcanvas {
+            background: var(--bg2) !important;
+            border-right: 1px solid var(--border) !important;
+            max-width: 280px;
+        }
+
+        .offcanvas-header {
+            border-bottom: 1px solid var(--border);
+            padding: 1.25rem 1.5rem;
+        }
+
+        .offcanvas-title {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 900;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+
+        .offcanvas-title span { color: var(--gold); }
+
+        .btn-close-offcanvas {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            line-height: 1;
+        }
+
+        .btn-close-offcanvas:hover { color: var(--text); }
+
+        .offcanvas-body { padding: 1rem 0; }
+
+        /* Links mobile */
+        .offcanvas-body .nav-link-mobile {
+            display: block;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 14px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .offcanvas-body .nav-link-mobile:hover {
+            color: var(--gold);
+            background: var(--bg3);
+        }
+
+        /* Label de seção no mobile */
+        .offcanvas-section-label {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            padding: 1rem 1.5rem 0.4rem;
+            display: block;
+        }
+
+        /* ── MAIN ── */
+        main { flex: 1; }
+        .container { max-width: 1160px; }
+
+        /* ── FOOTER ── */
+        footer {
+            background: rgba(26, 26, 26, 0.85);
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        footer p {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        footer span { color: var(--gold); }
+
+        /* ── CARDS ── */
+        .card {
+            background: rgba(26, 26, 26, 0.75) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 0 !important;
+            backdrop-filter: blur(6px);
+            transition: border-color 0.2s;
+        }
+
+        .card:hover { border-color: var(--gold) !important; }
+        .card-title { font-weight: 700 !important; font-size: 1.1rem !important; color: var(--text) !important; }
+        .card-subtitle { font-family: 'Barlow Condensed', sans-serif; font-size: 11px !important; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold) !important; }
+        .card-text { color: var(--muted) !important; font-size: 14px; line-height: 1.7; }
+
+        /* ── TÍTULOS ── */
+        h2.section-title {
+            font-weight: 900;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--gold);
+            display: inline-block;
+        }
+
+        /* ── LINKS ── */
+        a { color: var(--text); }
+        a:hover { color: var(--gold); }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── FUNDO ANIMADO ── -->
+    <div class="bg-animado">
+        <img src="{% static 'blog/images/bg.gif' %}" alt="" />
+        <div class="bg-overlay"></div>
+    </div>
+
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Dev<span>Blog</span></a>
+
+            <!-- Botão hamburguer (só aparece no mobile) -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#menuMobile"
+                    aria-controls="menuMobile">
+                ☰
+            </button>
+
+            <!-- ── MENU DESKTOP (some no mobile) ── -->
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto align-items-center gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Início</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            &#8226;&#8226;&#8226;
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'sobre_nos' %}">Sobre</a></li>
+                            <li><hr class="dropdown-divider" style="border-color: var(--border); margin: 4px 0;"></li>
+                            <li><span class="dropdown-item disabled">Categorias</span></li>
+                            {% for categoria in categorias %}
+                            <li><a class="dropdown-item" href="#">{{ categoria.nome }}</a></li>
+                            {% endfor %}
+                            <li><hr class="dropdown-divider" style="border-color: var(--border); margin: 4px 0;"></li>
+                            <li><a class="dropdown-item" href="{% url 'fale_conosco' %}">Contato</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- ── MENU MOBILE (offcanvas lateral) ── -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+        <div class="offcanvas-header">
+            <span class="offcanvas-title">Dev<span>Blog</span></span>
+            <button class="btn-close-offcanvas" data-bs-dismiss="offcanvas">✕</button>
+        </div>
+        <div class="offcanvas-body">
+
+            <a href="{% url 'home' %}" class="nav-link-mobile">Início</a>
+            <a href="{% url 'sobre_nos' %}" class="nav-link-mobile">Sobre</a>
+
+            <span class="offcanvas-section-label">Categorias</span>
+            {% for categoria in categorias %}
+            <a href="#" class="nav-link-mobile" style="padding-left: 2rem;">{{ categoria.nome }}</a>
+            {% endfor %}
+
+            <a href="{% url 'fale_conosco' %}" class="nav-link-mobile">Contato</a>
+
+        </div>
+    </div>
+
+    <!-- ── CONTEÚDO ── -->
+    <main class="container my-5">
         {% block content %}
-        <!-- Aqui vai o conteudo das outras paginas -->
         {% endblock %}
     </main>
 
-    <footer class="bg-dark text-white text-center py-4 mt-5">
-        <p class="mb-0"> © 2026 Desenvolvido pela Turma da Trilha Python</p>
-    </footer> 
-    
+    <!-- ── FOOTER ── -->
+    <footer>
+        <p>© 2026 Desenvolvido pela <span>Turma da Trilha Python</span></p>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    
 </body>
 </html>

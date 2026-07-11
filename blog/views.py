@@ -35,8 +35,7 @@ def sobre_nos(request):
 def fale_conosco(request):
     categorias = Categoria.objects.all()
     if request.method == "POST":
-        formulario = Contatoform
-        (request.POST)
+        formulario = Contatoform(request.POST)
 
         if formulario.is_valid():
             formulario.save()
