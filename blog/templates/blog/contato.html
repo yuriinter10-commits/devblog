@@ -1,14 +1,218 @@
-{% extends 'blog/base.html' %}
+{% extends "blog/base.html" %}
 
 {% block content %}
-    <h2>Fale Conosco</h2>
-    <p>Envie-nos uma mensagem, crítica ou sugestão.</p>
 
-    <form method="POST">
-        {% csrf_token %}
+<style>
+  .contato-wrapper {
+    max-width: 560px;
+    margin: 0 auto;
+  }
 
-        {{ form.as_p }}
+  .contato-titulo {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 900;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
 
-        <button type="submit" class="btn btn-primary mt-3">Enviar Mensagem</button>
-    </form>
+  .contato-subtitulo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .form-group { margin-bottom: 1.25rem; }
+
+  .form-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  .form-control {
+    background: #1a1a1a !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 0 !important;
+    color: var(--text) !important;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    padding: 0.65rem 1rem;
+    width: 100%;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  .form-control:focus {
+    border-color: var(--gold) !important;
+    box-shadow: none !important;
+    background: #222 !important;
+  }
+
+  .form-control::placeholder { color: var(--muted) !important; }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 130px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .btn-enviar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #111;
+    background: var(--gold);
+    border: none;
+    padding: 0.8rem 2rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .btn-enviar:hover { opacity: 0.85; }
+  .btn-enviar:active { transform: scale(0.98); }
+
+  /* Linha separadora */
+  .contato-linha {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0 1.5rem;
+  }
+
+  /* Info de contato */
+  .contato-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .contato-info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s;
+  }
+
+  .contato-info-item:last-child { border-bottom: none; }
+  .contato-info-item:hover { color: var(--gold); }
+  .contato-info-item svg { flex-shrink: 0; }
+
+  /* Responsivo mobile */
+  @media (max-width: 480px) {
+    .contato-titulo { font-size: 1.6rem; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="contato-wrapper">
+
+  <h1 class="contato-titulo">Fale Conosco</h1>
+  <p class="contato-subtitulo">Dúvidas, sugestões ou parcerias — estamos aqui</p>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label" for="{{ form.nome.id_for_label }}">Nome</label>
+        <input type="text"
+               name="{{ form.nome.html_name }}"
+               id="{{ form.nome.id_for_label }}"
+               class="form-control"
+               placeholder="Seu nome"
+               required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="{{ form.email.id_for_label }}">E-mail</label>
+        <input type="email"
+               name="{{ form.email.html_name }}"
+               id="{{ form.email.id_for_label }}"
+               class="form-control"
+               placeholder="seu@email.com"
+               required />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.assunto.id_for_label }}">Assunto</label>
+      <input type="text"
+             name="{{ form.assunto.html_name }}"
+             id="{{ form.assunto.id_for_label }}"
+             class="form-control"
+             placeholder="Sobre o que você quer falar?" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="{{ form.mensagem.id_for_label }}">Mensagem</label>
+      <textarea name="{{ form.mensagem.html_name }}"
+                id="{{ form.mensagem.id_for_label }}"
+                class="form-control"
+                placeholder="Escreva sua mensagem aqui..."
+                required></textarea>
+    </div>
+
+    <button type="submit" class="btn-enviar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/>
+      </svg>
+      Enviar mensagem
+    </button>
+
+  </form>
+
+  <hr class="contato-linha" />
+
+  <!-- Contatos -->
+  <div class="contato-info">
+    <a href="mailto:yuri.inter10@gmail.com" class="contato-info-item">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#EA4335" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+      </svg>
+      yuri.inter10@gmail.com
+    </a>
+    <a href="https://www.linkedin.com/in/yuri-rodrigues-1aa49b3a3" target="_blank" rel="noopener" class="contato-info-item">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="#0077B5">
+        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+        <rect x="2" y="9" width="4" height="12"/>
+        <circle cx="4" cy="4" r="2"/>
+      </svg>
+      linkedin.com/in/yuri-rodrigues
+    </a>
+  </div>
+
+</div>
+
 {% endblock %}
